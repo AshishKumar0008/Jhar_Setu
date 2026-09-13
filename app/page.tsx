@@ -1,83 +1,62 @@
 "use client";
 
 import React, { useState } from "react";
-import { Header } from "@/components/patterns/header";
+import { AppNavbar, UserRole } from "@/components/shell/app-navbar";
+import { RoleSidebar } from "@/components/shell/role-sidebar";
 import { PathBadge } from "@/components/patterns/path-badge";
-import { TrustBadge } from "@/components/patterns/trust-badge";
-import { PilotTabs, PilotTabContent } from "@/components/patterns/pilot-tabs";
+import {
+  StatusBadge,
+  TrustBadge,
+  AISuggestionBadge,
+  StatusCode,
+} from "@/components/patterns/status-badge";
+import { DetailTabs, DetailTabContent } from "@/components/patterns/detail-tabs";
+import { ActionDialog } from "@/components/patterns/action-dialog";
 import { EmptyState } from "@/components/patterns/empty-state";
-import { FormField } from "@/components/patterns/form-field";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
-import { Progress } from "@/components/ui/progress";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { toast } from "sonner";
 
 import {
-  CheckCircle2,
   FileText,
-  HelpCircle,
-  Layers,
-  MapPin,
-  SlidersHorizontal,
+  PanelLeftOpen,
 } from "lucide-react";
 
 export default function HomePage() {
   const [lang, setLang] = useState<"en" | "hi">("en");
-  const [showToast, setShowToast] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<UserRole>("reviewer");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeNavItem, setActiveNavItem] = useState<string>("dashboard");
+
+  // Dialog Pattern state demonstration
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [progressVal] = useState(65);
+  const [certDialogOpen, setCertDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Authenticated user mock based on selected role
+  const currentUser =
+    selectedRole === "citizen"
+      ? null
+      : {
+          name:
+            selectedRole === "reviewer"
+              ? "Dr. Ananya Verma"
+              : selectedRole === "department_officer"
+              ? "Rajesh Murmu (EE, DW&S)"
+              : selectedRole === "government"
+              ? "Vikram Soren (IAS, Secretary)"
+              : selectedRole === "university"
+              ? "Prof. S. K. Roy (BIT Mesra)"
+              : selectedRole === "industry_csr"
+              ? "Tata Steel CSR Lead"
+              : "System Administrator",
+          role: selectedRole,
+          email: `${selectedRole}@jharsetu.jharkhand.gov.in`,
+        };
 
   const triggerCivicToast = () => {
     toast.success("Acknowledgement Receipt Generated", {
@@ -85,12 +64,123 @@ export default function HomePage() {
     });
   };
 
+  const handleConfirmDecision = () => {
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setDialogOpen(false);
+      toast.success("Reviewer Decision Recorded", {
+        description: "Path C proposed with reason code RES-04. Second review required.",
+      });
+    }, 600);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F8FA] text-[#111827]">
-      {/* Official Government Header with 3px Tricolor Accent Line */}
-      <Header currentLang={lang} onLanguageChange={setLang} />
+      {/* Official Government AppNavbar with 3px Tricolor Accent Line */}
+      <AppNavbar
+        currentRole={selectedRole}
+        sidebarOpen={sidebarOpen}
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        currentLang={lang}
+        onLanguageChange={setLang}
+        user={currentUser}
+        onRoleChange={(role) => {
+          setSelectedRole(role);
+          if (role === "citizen") {
+            setSidebarOpen(false);
+          }
+        }}
+        onSignInClick={() => {
+          setSelectedRole("reviewer");
+          toast.info("Signed in as Reviewer (Demo Mode)");
+        }}
+        onSignOutClick={() => {
+          setSelectedRole("citizen");
+          toast.info("Signed out to Public Citizen view");
+        }}
+      />
+
+      {/* Floating Role Sidebar: Slides in from left, floats above page canvas without pushing content */}
+      <RoleSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentRole={selectedRole}
+        activeItemId={activeNavItem}
+        onSelectItem={(item) => {
+          setActiveNavItem(item);
+          toast.info(`Navigated to: ${item}`);
+        }}
+      />
 
       <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-10">
+        {/* Role Testbench & Interactive Shell Controller */}
+        <section className="rounded-xl border border-[#0F62B4]/30 bg-[#0F62B4]/5 p-5">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-2 w-2 rounded-full bg-[#0F62B4]" />
+                <span className="text-xs font-bold uppercase tracking-wider text-[#0F62B4]">
+                  Shell Interactive Testbench (Phase 02)
+                </span>
+              </div>
+              <h2 className="text-sm font-semibold text-[#111827]">
+                Active Role: <span className="text-[#0F62B4] font-bold capitalize">{selectedRole.replace("_", " ")}</span>
+                {selectedRole === "citizen" ? " (Public Page — No Sidebar Toggle)" : " (Internal Role — Has Sidebar Toggle)"}
+              </h2>
+              <p className="text-xs text-[#6B7280]">
+                Select any of the 7 system roles to verify navbar state, sidebar menu tree items, and role-specific views.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {(
+                [
+                  "citizen",
+                  "reviewer",
+                  "department_officer",
+                  "government",
+                  "university",
+                  "industry_csr",
+                  "admin",
+                ] as UserRole[]
+              ).map((role) => (
+                <button
+                  key={role}
+                  type="button"
+                  onClick={() => {
+                    setSelectedRole(role);
+                    if (role === "citizen") {
+                      setSidebarOpen(false);
+                    } else {
+                      setSidebarOpen(true);
+                    }
+                  }}
+                  className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+                    selectedRole === role
+                      ? "bg-[#0F62B4] text-white font-bold shadow-xs"
+                      : "bg-white border border-[#E2E5EA] text-[#111827] hover:border-[#0F62B4]/50"
+                  }`}
+                >
+                  {role === "citizen" ? "Citizen (Public)" : role.replace("_", " ")}
+                </button>
+              ))}
+
+              {selectedRole !== "citizen" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSidebarOpen(true)}
+                  className="min-h-[32px] text-xs gap-1.5 border-[#0F62B4]/40 text-[#0F62B4] bg-white hover:bg-[#0F62B4]/10"
+                >
+                  <PanelLeftOpen className="h-3.5 w-3.5" />
+                  <span>Open {selectedRole.replace("_", " ")} Sidebar</span>
+                </Button>
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* Hero Notice / Civic Introduction */}
         <section
           className="rounded-xl border border-[#E2E5EA] bg-white p-6 sm:p-8"
@@ -101,7 +191,7 @@ export default function HomePage() {
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <TrustBadge type="jharkhand-pilot" />
                 <TrustBadge type="verified-institution" />
-                <TrustBadge type="ai-suggestion" />
+                <AISuggestionBadge confidence={0.94} />
               </div>
               <h1
                 id="hero-title"
@@ -124,7 +214,7 @@ export default function HomePage() {
                 variant="default"
                 size="lg"
                 onClick={triggerCivicToast}
-                className="min-h-[44px] bg-[#0F62B4] hover:bg-[#0F62B4]/90 text-white font-semibold text-sm px-6 shadow-xs rounded-md"
+                className="min-h-[44px] bg-[#0F62B4] hover:bg-[#0D5299] text-white font-semibold text-sm px-6 shadow-xs rounded-md"
               >
                 <FileText className="h-4 w-4 mr-2" />
                 {lang === "en" ? "Report a Problem" : "समस्या दर्ज करें"}
@@ -152,250 +242,262 @@ export default function HomePage() {
             <div className="p-4 rounded-lg border border-[#E2E5EA] bg-[#F7F8FA]">
               <div className="flex items-center justify-between mb-2">
                 <PathBadge path="B" />
-                <span className="text-[11px] font-mono text-[#6B7280]">RCD / DWSD</span>
+                <span className="text-[11px] font-mono text-[#6B7280]">CPGRAMS/Dept</span>
               </div>
               <h2 className="text-sm font-semibold text-[#111827]">
-                Grievance Routing
+                Accountable Grievance Routing
               </h2>
               <p className="text-xs text-[#6B7280] mt-1">
-                Accountable authority routing for infrastructure and standard departmental repairs.
+                Structured SLA routing to responsible field departments with evidence tracking.
               </p>
             </div>
 
             <div className="p-4 rounded-lg border border-[#E2E5EA] bg-[#F7F8FA]">
               <div className="flex items-center justify-between mb-2">
                 <PathBadge path="C" />
-                <span className="text-[11px] font-mono text-[#6B7280]">IGC Certified</span>
+                <span className="text-[11px] font-mono text-[#6B7280]">SIH 26043 Core</span>
               </div>
               <h2 className="text-sm font-semibold text-[#111827]">
                 Innovation Gap Certificate
               </h2>
               <p className="text-xs text-[#6B7280] mt-1">
-                Evidence-verified structural gaps activating university and industry pilot trials.
+                Evidence-verified structural void triggering university pilot and CSR support.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Blueprint Section 11 Exact Tab Integration */}
+        {/* Unified Status & Badge Pattern Gallery */}
         <section
-          className="rounded-xl border border-[#E2E5EA] bg-white p-6"
-          aria-labelledby="pilot-heading"
+          className="rounded-xl border border-[#E2E5EA] bg-white p-6 sm:p-8 space-y-6"
+          aria-labelledby="badge-gallery-title"
         >
-          <div className="mb-4">
-            <h2 id="pilot-heading" className="text-lg font-bold text-[#111827]">
-              Government Validation & Pilot Tracking (Screen 11 Blueprint)
+          <div className="space-y-1">
+            <h2 id="badge-gallery-title" className="text-lg font-bold text-[#111827]">
+              Path, Trust & Status Badge System
             </h2>
             <p className="text-xs text-[#6B7280]">
-              Tabs directly under page heading, full width on mobile, left-aligned on desktop.
+              Centralized color token map per <code>context/ui-context.md</code>. Never renders ad-hoc colors.
             </p>
           </div>
 
-          <PilotTabs defaultValue="overview">
-            <PilotTabContent value="overview" className="pt-6 space-y-4">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Decision / Intake Card */}
-                <Card className="border-[#E2E5EA] shadow-none">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <PathBadge path="C" />
-                      <TrustBadge type="pending" label="PILOT_PENDING" />
-                    </div>
-                    <CardTitle className="text-base font-semibold text-[#111827] mt-2">
-                      Water Arsenic Remediation in Sahebganj
-                    </CardTitle>
-                    <CardDescription className="text-xs text-[#6B7280]">
-                      Case ID: JH-2026-09-0012 • Sahibganj District
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3 text-xs">
-                    <div className="p-2.5 rounded bg-[#F7F8FA] border border-[#E2E5EA] space-y-1">
-                      <div className="font-semibold text-[#111827]">
-                        Verified Baseline
-                      </div>
-                      <div className="text-[#6B7280]">
-                        0.08 mg/L arsenic concentration (WHO limit: 0.01 mg/L).
-                      </div>
-                    </div>
-                    <div>
-                      <div className="font-semibold text-[#111827] mb-1">
-                        Pilot Progress
-                      </div>
-                      <Progress value={progressVal} className="h-2" />
-                      <div className="flex justify-between text-[11px] text-[#6B7280] mt-1">
-                        <span>Milestone 2 of 4 complete</span>
-                        <span>{progressVal}%</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="pt-2 border-t border-[#E2E5EA] flex gap-2">
-                    {/* Outline button only */}
-                    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                      <DialogTrigger
-                        render={
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full border-[#E2E5EA] text-[#111827] hover:bg-[#F7F8FA] text-xs font-medium"
-                          >
-                            Inspect Decision Card
-                          </Button>
-                        }
-                      />
-                      <DialogContent className="sm:max-w-lg border-[#E2E5EA] rounded-2xl">
-                        <DialogHeader>
-                          <DialogTitle className="text-base font-bold text-[#111827]">
-                            Reviewer Decision Confirmation
-                          </DialogTitle>
-                          <DialogDescription className="text-xs text-[#6B7280]">
-                            Verify evidence before issuing the Innovation Gap Certificate.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-3 py-2 text-xs">
-                          <FormField
-                            id="reason-code"
-                            label="Mandatory Reason Code"
-                            required
-                            hint="Document why Path C was chosen over standard Path B repair."
-                          >
-                            <Input
-                              id="reason-code"
-                              defaultValue="NO_KNOWN_STATE_TECH_SOL"
-                              className="border-[#E2E5EA] text-xs"
-                            />
-                          </FormField>
-                          <FormField
-                            id="decision-rationale"
-                            label="Reviewer Rationale"
-                            required
-                          >
-                            <Textarea
-                              id="decision-rationale"
-                              placeholder="Describe lab test corroboration and geographic clusters..."
-                              className="border-[#E2E5EA] text-xs min-h-[80px]"
-                            />
-                          </FormField>
-                        </div>
-                        <DialogFooter>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setDialogOpen(false)}
-                            className="border-[#E2E5EA]"
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => {
-                              setDialogOpen(false);
-                              toast.success("Decision recorded with audit hash");
-                            }}
-                            className="bg-[#0F62B4] text-white"
-                          >
-                            Confirm Decision
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                  </CardFooter>
-                </Card>
-
-                {/* Verification Queue Table */}
-                <Card className="lg:col-span-2 border-[#E2E5EA] shadow-none">
-                  <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                    <div>
-                      <CardTitle className="text-base font-semibold text-[#111827]">
-                        Active Case Queue
-                      </CardTitle>
-                      <CardDescription className="text-xs text-[#6B7280]">
-                        Seeded demonstration cases with role and audit trail
-                      </CardDescription>
-                    </div>
-                    {/* Outline button only */}
-                    <Sheet>
-                      <SheetTrigger
-                        render={
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-[#E2E5EA] text-xs font-medium"
-                          >
-                            <SlidersHorizontal className="h-3.5 w-3.5 mr-1 text-[#0F62B4]" />
-                            Filters
-                          </Button>
-                        }
-                      />
-                      <SheetContent className="border-l-[#E2E5EA] bg-white">
-                        <SheetHeader>
-                          <SheetTitle className="text-base font-bold text-[#111827]">
-                            Queue Filters
-                          </SheetTitle>
-                          <SheetDescription className="text-xs text-[#6B7280]">
-                            Filter reports by district, path, or severity.
-                          </SheetDescription>
-                        </SheetHeader>
-                        <div className="space-y-4 py-6 text-xs">
-                          <FormField id="district-select" label="District" required={false}>
-                            <Select defaultValue="sahibganj">
-                              <SelectTrigger className="border-[#E2E5EA] text-xs">
-                                <SelectValue placeholder="Select district" />
-                              </SelectTrigger>
-                              <SelectContent className="border-[#E2E5EA]">
-                                <SelectItem value="sahibganj">Sahibganj</SelectItem>
-                                <SelectItem value="ranchi">Ranchi</SelectItem>
-                                <SelectItem value="dhanbad">Dhanbad</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormField>
-                        </div>
-                      </SheetContent>
-                    </Sheet>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="border-b-[#E2E5EA] bg-[#F7F8FA]">
-                          <TableHead className="text-xs font-semibold text-[#111827]">Case ID</TableHead>
-                          <TableHead className="text-xs font-semibold text-[#111827]">Location</TableHead>
-                          <TableHead className="text-xs font-semibold text-[#111827]">Path</TableHead>
-                          <TableHead className="text-xs font-semibold text-[#111827]">Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow className="border-b-[#E2E5EA] hover:bg-[#F7F8FA]">
-                          <TableCell className="font-mono text-xs font-medium">JH-2026-09-0012</TableCell>
-                          <TableCell className="text-xs">Sahibganj (Barharwa)</TableCell>
-                          <TableCell><PathBadge path="C" /></TableCell>
-                          <TableCell><TrustBadge type="pending" label="PILOT_PENDING" /></TableCell>
-                        </TableRow>
-                        <TableRow className="border-b-[#E2E5EA] hover:bg-[#F7F8FA]">
-                          <TableCell className="font-mono text-xs font-medium">JH-2026-09-0044</TableCell>
-                          <TableCell className="text-xs">Ranchi (Ring Road)</TableCell>
-                          <TableCell><PathBadge path="B" /></TableCell>
-                          <TableCell><TrustBadge type="confirmed" label="RESOLVED" /></TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-2">
+                1. Path Badges (Path A / B / C)
+              </h3>
+              <div className="flex flex-wrap gap-2.5">
+                <PathBadge path="A" />
+                <PathBadge path="B" />
+                <PathBadge path="C" />
               </div>
-            </PilotTabContent>
+            </div>
 
-            <PilotTabContent value="timeline" className="pt-6">
-              <div className="p-6 rounded-lg border border-[#E2E5EA] bg-white space-y-4">
-                <h3 className="text-sm font-bold text-[#111827]">State Transition Audit Timeline</h3>
+            <Separator className="bg-[#E2E5EA]" />
+
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-2">
+                2. Trust Cues & AI Suggestion Distinction
+              </h3>
+              <div className="flex flex-wrap items-center gap-3">
+                <TrustBadge type="jharkhand-pilot" />
+                <TrustBadge type="verified-institution" />
+                <TrustBadge type="official-handoff" />
+                <AISuggestionBadge confidence={0.88} />
+              </div>
+              <p className="text-[11px] text-[#6B7280] mt-1.5">
+                Notice: The AI suggestion badge uses an amber warning glow and distinct wording so reviewers never mistake AI output for official verified authority decisions.
+              </p>
+            </div>
+
+            <Separator className="bg-[#E2E5EA]" />
+
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-2">
+                3. Unified Workflow Status Badges (Shared Token Map)
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {(
+                  [
+                    "SUBMITTED",
+                    "AI_PROCESSED",
+                    "NEEDS_HUMAN_REVIEW",
+                    "NEEDS_INFORMATION",
+                    "PATH_A_REFERRED",
+                    "PATH_B_ROUTED",
+                    "PATH_C_PROPOSED",
+                    "CERTIFICATE_ISSUED",
+                    "PASSPORT_PUBLISHED",
+                    "PILOT_PENDING",
+                    "PILOT_READY",
+                    "PILOT_ACTIVE",
+                    "CONFIRMED",
+                    "RESOLVED",
+                    "ADOPTED",
+                    "REJECTED",
+                    "CLOSED",
+                  ] as StatusCode[]
+                ).map((st) => (
+                  <StatusBadge key={st} status={st} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Dialog Pattern Demonstrator */}
+        <section
+          className="rounded-xl border border-[#E2E5EA] bg-white p-6 sm:p-8 space-y-6"
+          aria-labelledby="dialog-pattern-title"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h2 id="dialog-pattern-title" className="text-lg font-bold text-[#111827]">
+                Civic Dialog Pattern
+              </h2>
+              <p className="text-xs text-[#6B7280]">
+                Standardized confirmation shape with title, description, and footer actions (rounded-2xl overlay per <code>ui-context.md</code>).
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDialogOpen(true)}
+                className="min-h-[36px] text-xs font-semibold border-[#E2E5EA] text-[#111827] hover:bg-[#F7F8FA]"
+              >
+                Open Reviewer Decision Dialog
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCertDialogOpen(true)}
+                className="min-h-[36px] text-xs font-semibold border-[#7C3AED]/40 text-[#7C3AED] hover:bg-[#7C3AED]/10"
+              >
+                Open IGC Certificate Dialog
+              </Button>
+            </div>
+          </div>
+
+          {/* Action Dialog 1: Reviewer Decision */}
+          <ActionDialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            title="Confirm Review Decision — Path C Proposal"
+            description="You are proposing an Innovation Gap Certificate for Case #JH-2026-09-0012 (High Arsenic Concentration in Drinking Water, Sahibganj). This requires secondary reviewer verification."
+            confirmLabel="Submit Decision & Notify Reviewer 2"
+            cancelLabel="Cancel"
+            isConfirmLoading={isSubmitting}
+            onConfirm={handleConfirmDecision}
+            onCancel={() => setDialogOpen(false)}
+          >
+            <div className="space-y-3 rounded-lg border border-[#E2E5EA] bg-[#F7F8FA] p-3 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-[#111827]">Reason Code:</span>
+                <span className="font-mono text-[#0F62B4] font-bold">RES-04 (No standard scheme applicable)</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-[#111827]">Assigned Path:</span>
+                <PathBadge path="C" />
+              </div>
+              <p className="text-[#6B7280] text-[11px]">
+                Audit invariant: A record will be written to <code>audit_events</code> before state transition.
+              </p>
+            </div>
+          </ActionDialog>
+
+          {/* Action Dialog 2: Certificate Issuance */}
+          <ActionDialog
+            open={certDialogOpen}
+            onOpenChange={setCertDialogOpen}
+            title="Issue Innovation Gap Certificate (IGC-JH-2026-004)"
+            description="Second human reviewer sign-off. Generating immutable cryptographic certificate for university pilot matching."
+            confirmLabel="Authorize & Issue Certificate"
+            cancelLabel="Return to Queue"
+            onConfirm={() => {
+              setCertDialogOpen(false);
+              toast.success("Certificate IGC-JH-2026-004 Issued", {
+                description: "Challenge Passport now open for University Capability matching.",
+              });
+            }}
+            onCancel={() => setCertDialogOpen(false)}
+          >
+            <div className="space-y-2 text-xs">
+              <p className="font-medium text-[#111827]">Summary of Evidence Verified:</p>
+              <ul className="list-disc list-inside text-[#6B7280] space-y-1">
+                <li>Lab arsenic test report confirms 0.08 mg/L (standard: &lt;0.01 mg/L)</li>
+                <li>Geographical cluster confirms 3 panchayats affected (population &gt;4,200)</li>
+                <li>Department of Drinking Water confirms no active pipeline sanction</li>
+              </ul>
+            </div>
+          </ActionDialog>
+        </section>
+
+        {/* Blueprint Section 11 Pilot Screen Detail Tabs Pattern */}
+        <section
+          className="rounded-xl border border-[#E2E5EA] bg-white p-6 sm:p-8 space-y-6"
+          aria-labelledby="pilot-tabs-title"
+        >
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <PathBadge path="C" />
+              <TrustBadge type="jharkhand-pilot" />
+            </div>
+            <h2 id="pilot-tabs-title" className="text-lg font-bold text-[#111827]">
+              Section 11 Pilot Detail Tabs Pattern (Generic DetailTabs)
+            </h2>
+            <p className="text-xs text-[#6B7280]">
+              Tabs sit directly under page heading, full width on mobile, left-aligned on desktop (never centered). Accepts dynamic tab configurations.
+            </p>
+          </div>
+
+          <DetailTabs defaultValue="overview">
+            <DetailTabContent value="overview" className="pt-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-lg border border-[#E2E5EA] bg-[#F7F8FA] space-y-1">
+                  <span className="text-xs font-semibold text-[#6B7280]">Pilot Designation</span>
+                  <p className="text-sm font-bold text-[#111827]">
+                    Low-Cost Solar Electrocoagulation Arsenic Remediation
+                  </p>
+                  <p className="text-xs text-[#6B7280]">
+                    Location: Sahibganj District (Udhwa Block) • Target Beneficiaries: 4,200 villagers
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg border border-[#E2E5EA] bg-[#F7F8FA] space-y-1">
+                  <span className="text-xs font-semibold text-[#6B7280]">Matched University Team</span>
+                  <p className="text-sm font-bold text-[#111827]">
+                    Birla Institute of Technology (BIT) Mesra — Environmental Engineering
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <TrustBadge type="verified-institution" />
+                    <span className="text-xs text-[#16A34A] font-semibold">Match Score: 92/100</span>
+                  </div>
+                </div>
+              </div>
+            </DetailTabContent>
+
+            <DetailTabContent value="timeline" className="pt-6">
+              <div className="border border-[#E2E5EA] rounded-lg p-4 bg-[#F7F8FA]">
+                <div className="text-xs font-semibold text-[#111827] mb-3">Field Pilot Milestones</div>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3 text-xs">
-                    <div className="h-6 w-6 rounded-full bg-[#16A34A]/10 text-[#16A34A] flex items-center justify-center font-bold">✓</div>
+                    <span className="h-2 w-2 rounded-full bg-[#16A34A] mt-1.5" />
                     <div>
-                      <div className="font-semibold text-[#111827]">REPORT_SUBMITTED → AI_PROCESSED</div>
-                      <div className="text-[#6B7280]">Whisper transcription and PII redaction verified without errors.</div>
+                      <div className="font-semibold text-[#111827]">PILOT_READINESS_APPROVED</div>
+                      <div className="text-[#6B7280]">Government Secretary signed readiness checklist after site survey.</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 text-xs">
-                    <div className="h-6 w-6 rounded-full bg-[#0F62B4]/10 text-[#0F62B4] flex items-center justify-center font-bold">2</div>
+                    <span className="h-2 w-2 rounded-full bg-[#0F62B4] mt-1.5" />
+                    <div>
+                      <div className="font-semibold text-[#111827]">COMMITMENT_LOCKED</div>
+                      <div className="text-[#6B7280]">Tata Steel CSR locked ₹15,00,000 deployment support in ledger.</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 text-xs">
+                    <span className="h-2 w-2 rounded-full bg-[#7C3AED] mt-1.5" />
                     <div>
                       <div className="font-semibold text-[#111827]">REVIEWER_SIGN_OFF</div>
                       <div className="text-[#6B7280]">Two human reviewers recorded IGC eligibility sign-off with reason code.</div>
@@ -403,9 +505,9 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            </PilotTabContent>
+            </DetailTabContent>
 
-            <PilotTabContent value="measurements" className="pt-6">
+            <DetailTabContent value="measurements" className="pt-6">
               <div className="p-4 rounded-lg border border-[#E2E5EA] bg-white">
                 <h3 className="text-sm font-semibold text-[#111827] mb-2">Field Sensor Measurements</h3>
                 <p className="text-xs text-[#6B7280] mb-4">Baseline: 0.08 mg/L arsenic. Current pilot reading: 0.008 mg/L.</p>
@@ -414,9 +516,9 @@ export default function HomePage() {
                   <Skeleton className="h-4 w-1/2 bg-[#E2E5EA]" />
                 </div>
               </div>
-            </PilotTabContent>
+            </DetailTabContent>
 
-            <PilotTabContent value="evidence" className="pt-6">
+            <DetailTabContent value="evidence" className="pt-6">
               <ScrollArea className="h-32 rounded-md border border-[#E2E5EA] p-4 bg-white">
                 <div className="text-xs space-y-2 text-[#6B7280]">
                   <p className="font-medium text-[#111827]">Uploaded Lab Reports (Signed Object Storage):</p>
@@ -424,9 +526,9 @@ export default function HomePage() {
                   <p>2. field_filter_installation_photo_01.jpg (Exif Geotag: 25.042°N, 87.831°E)</p>
                 </div>
               </ScrollArea>
-            </PilotTabContent>
+            </DetailTabContent>
 
-            <PilotTabContent value="risks-issues" className="pt-6">
+            <DetailTabContent value="risks-issues" className="pt-6">
               <Accordion className="w-full bg-white border border-[#E2E5EA] rounded-md px-4">
                 <AccordionItem value="item-1" className="border-b-[#E2E5EA]">
                   <AccordionTrigger className="text-xs font-semibold text-[#111827]">
@@ -437,36 +539,36 @@ export default function HomePage() {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </PilotTabContent>
+            </DetailTabContent>
 
-            <PilotTabContent value="commitments" className="pt-6">
+            <DetailTabContent value="commitments" className="pt-6">
               <div className="p-4 rounded-lg border border-[#E2E5EA] bg-white space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#111827]">Tata Steel Foundation (CSR)</span>
-                  <TrustBadge type="confirmed" label="CONFIRMED: ₹15,00,000" />
+                  <StatusBadge status="CONFIRMED" label="CONFIRMED: ₹15,00,000" />
                 </div>
                 <p className="text-xs text-[#6B7280]">
                   Direct commitment ledger entry locked with irrevocable audit token.
                 </p>
               </div>
-            </PilotTabContent>
+            </DetailTabContent>
 
-            <PilotTabContent value="evaluation" className="pt-6">
+            <DetailTabContent value="evaluation" className="pt-6">
               <div className="p-4 rounded-lg border border-[#E2E5EA] bg-white">
                 <h3 className="text-xs font-semibold text-[#111827] mb-1">State Evaluation Matrix</h3>
                 <p className="text-xs text-[#6B7280]">
                   Target cost: &lt;₹0.15 / liter. Pilot achieved: ₹0.09 / liter with 99.2% uptime.
                 </p>
               </div>
-            </PilotTabContent>
+            </DetailTabContent>
 
-            <PilotTabContent value="audit" className="pt-6">
+            <DetailTabContent value="audit" className="pt-6">
               <EmptyState
                 title="Immutable Audit Ledger"
                 description="All state transitions, AI suggested confidence scores, and reviewer signatures are cryptographically bound."
               />
-            </PilotTabContent>
-          </PilotTabs>
+            </DetailTabContent>
+          </DetailTabs>
         </section>
       </main>
 

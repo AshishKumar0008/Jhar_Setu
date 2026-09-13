@@ -4,7 +4,7 @@ Update this file after every meaningful implementation change.
 
 ## Current Phase
 
-- Not started — pre-build setup
+- Phase 02: Base Chrome & App Shell Components
 
 ## Current Goal
 
@@ -15,10 +15,16 @@ Update this file after every meaningful implementation change.
 ## Completed
 
 - 01 Design System and UI primitive components (`context/feature-specs/01 design system.md`) — shadcn primitives, civic tokens from `ui-context.md`, `cn()` helper, `lucide-react`, government header with 3px tricolor line, Path A/B/C and trust badges, blueprint Section 11 tabs, Inter & Noto Sans Devanagari typography.
+- 02 App Shell Components (`context/feature-specs/02-app-shell .md`) — Base chrome framing components:
+  - `components/shell/app-navbar.tsx`: fixed-height civic navbar with tricolor line, emblem, bilingual title, language toggle, auth/role menu, and role-based sidebar toggle (`PanelLeftOpen`/`PanelLeftClose`).
+  - `components/shell/role-sidebar.tsx`: floating overlay sidebar with fixed screen-tree nav items for all 6 internal roles (Reviewer, Department officer, Government, University, Industry/CSR, Admin), active bold/filled state using `--accent-primary`.
+  - `components/patterns/path-badge.tsx` & `components/patterns/status-badge.tsx`: centralized color token mapping for Path A/B/C, trust cues, AI suggestion badge (visually distinct warning tint), and unified workflow status badges.
+  - `components/patterns/detail-tabs.tsx`: generic full-width/left-aligned tab bar wrapping shadcn Tabs with blueprint Section 11 pilot tabs default.
+  - `components/patterns/action-dialog.tsx`: reusable civic dialog shape with title, description, and footer actions.
 
 ## In Progress
 
-- None yet.
+- None (Phase 02 completed).
 
 ## Next Up
 
