@@ -1,485 +1,394 @@
 "use client";
 
 import React, { useState } from "react";
-import { Header } from "@/components/patterns/header";
-import { PathBadge } from "@/components/patterns/path-badge";
-import { TrustBadge } from "@/components/patterns/trust-badge";
-import { PilotTabs, PilotTabContent } from "@/components/patterns/pilot-tabs";
-import { EmptyState } from "@/components/patterns/empty-state";
-import { FormField } from "@/components/patterns/form-field";
-
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { UtilityBar } from "@/components/shell/utility-bar";
+import { AppNavbar } from "@/components/shell/app-navbar";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
-import { Progress } from "@/components/ui/progress";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
-
-import {
-  CheckCircle2,
   FileText,
-  HelpCircle,
-  Layers,
-  MapPin,
-  SlidersHorizontal,
+  Search,
+  MessageCircle,
+  ArrowRight,
+  Phone,
+  Sparkles,
 } from "lucide-react";
 
 export default function HomePage() {
   const [lang, setLang] = useState<"en" | "hi">("en");
-  const [showToast, setShowToast] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [progressVal] = useState(65);
-
-  const triggerCivicToast = () => {
-    toast.success("Acknowledgement Receipt Generated", {
-      description: "Case ID #JH-2026-09-0012 has been recorded in audit ledger.",
-    });
-  };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F8FA] text-[#111827]">
-      {/* Official Government Header with 3px Tricolor Accent Line */}
-      <Header currentLang={lang} onLanguageChange={setLang} />
+    <div className="min-h-screen flex flex-col bg-[var(--bg-base)] text-[var(--text-primary)]">
+      {/* Utility Bar (GIGW pattern) */}
+      <UtilityBar currentLang={lang} onLanguageChange={setLang} />
 
-      <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-10">
-        {/* Hero Notice / Civic Introduction */}
-        <section
-          className="rounded-xl border border-[#E2E5EA] bg-white p-6 sm:p-8"
-          aria-labelledby="hero-title"
-        >
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2 max-w-3xl">
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <TrustBadge type="jharkhand-pilot" />
-                <TrustBadge type="verified-institution" />
-                <TrustBadge type="ai-suggestion" />
+      {/* Existing Navbar from Phase 02 */}
+      <AppNavbar
+        currentRole="citizen"
+        isPublic
+        currentLang={lang}
+        onLanguageChange={setLang}
+        onSignInClick={() => {}}
+      />
+
+      {/* ───── HERO SECTION ───── */}
+      <section
+        className="w-full bg-[var(--bg-cream)]"
+        aria-labelledby="hero-heading"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24">
+          {/* Eyebrow */}
+          <p className="text-xs sm:text-sm font-semibold tracking-widest uppercase text-[var(--accent-primary)] mb-4">
+            JHARKHAND PUBLIC SERVICES / लोक सेवाएँ
+          </p>
+
+          {/* Main Heading */}
+          <h1
+            id="hero-heading"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[var(--text-primary)] leading-tight max-w-3xl"
+          >
+            Report a local problem.
+            <br />
+            Find the right next step.
+          </h1>
+          <p className="mt-2 text-lg sm:text-xl text-[var(--accent-primary)] font-medium max-w-2xl">
+            समस्या दर्ज करें। सही अगला कदम पाएं।
+          </p>
+
+          {/* Subtext */}
+          <p className="mt-4 text-sm sm:text-base text-[var(--text-muted)] max-w-xl">
+            {lang === "en"
+              ? "Speak, type, or add a photo."
+              : "बोलें, टाइप करें, या फोटो जोड़ें।"}
+          </p>
+        </div>
+      </section>
+
+      {/* ───── MAIN CONTENT ───── */}
+      <main id="main-content" className="flex-1">
+        {/* ── Three Action Cards ── */}
+        <section className="w-full -mt-2" aria-label="Quick Actions">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+              {/* Report a Problem */}
+              <div className="rounded-xl p-6 sm:p-7 flex flex-col justify-between min-h-[200px] bg-[var(--action-report)] text-white shadow-md hover:shadow-lg transition-shadow">
+                <div>
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-md mb-4">
+                    STEP 1 / पहला कदम
+                  </span>
+                  <FileText className="h-8 w-8 mb-3 opacity-90" />
+                  <h2 className="text-xl font-bold leading-snug">
+                    Report a Problem
+                  </h2>
+                  <p className="text-sm text-white/80 mt-1.5 leading-relaxed">
+                    {lang === "en"
+                      ? "Describe your local issue by voice, text, or photo."
+                      : "अपनी समस्या बोलकर, लिखकर या फोटो से बताएं।"}
+                  </p>
+                </div>
+                <Link
+                  href="/report/new"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white hover:underline underline-offset-4 group"
+                >
+                  Report Now
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               </div>
-              <h1
-                id="hero-title"
-                className="text-2xl sm:text-3xl font-bold tracking-tight text-[#111827]"
-              >
-                {lang === "en"
-                  ? "JharSetu — Innovation Gap Exchange for Jharkhand"
-                  : "झारसेतु — झारखंड नवाचार अंतर विनिमय मंच"}
-              </h1>
-              <p className="text-sm text-[#6B7280] leading-relaxed">
-                {lang === "en"
-                  ? "A privacy-preserving, human-governed platform turning citizen problem reports into accountable civic outcomes: Existing Service Referral (Path A), Grievance Routing (Path B), or an Innovation Gap Certificate for field pilots (Path C)."
-                  : "नागरिक समस्याओं को जवाबदेह परिणामों में बदलने वाला मानव-नियंत्रित मंच: सेवा रेफरल (पथ A), शिकायत निवारण (पथ B), अथवा नवाचार अंतर प्रमाण पत्र (पथ C)।"}
-              </p>
-            </div>
 
-            {/* ONLY ONE Solid-filled Primary Button per view */}
-            <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-              <Button
-                variant="default"
-                size="lg"
-                onClick={triggerCivicToast}
-                className="min-h-[44px] bg-[#0F62B4] hover:bg-[#0F62B4]/90 text-white font-semibold text-sm px-6 shadow-xs rounded-md"
-              >
-                <FileText className="h-4 w-4 mr-2" />
-                {lang === "en" ? "Report a Problem" : "समस्या दर्ज करें"}
-              </Button>
-            </div>
-          </div>
-
-          <Separator className="my-6 bg-[#E2E5EA]" />
-
-          {/* Tri-path visual routing tokens */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg border border-[#E2E5EA] bg-[#F7F8FA]">
-              <div className="flex items-center justify-between mb-2">
-                <PathBadge path="A" />
-                <span className="text-[11px] font-mono text-[#6B7280]">JharSewa</span>
+              {/* Track My Report */}
+              <div className="rounded-xl p-6 sm:p-7 flex flex-col justify-between min-h-[200px] bg-[var(--action-track)] text-white shadow-md hover:shadow-lg transition-shadow">
+                <div>
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-md mb-4">
+                    STATUS / स्थिति
+                  </span>
+                  <Search className="h-8 w-8 mb-3 opacity-90" />
+                  <h2 className="text-xl font-bold leading-snug">
+                    Track My Report
+                  </h2>
+                  <p className="text-sm text-white/80 mt-1.5 leading-relaxed">
+                    {lang === "en"
+                      ? "Check real-time status with your report ID or mobile number."
+                      : "अपनी शिकायत आईडी या मोबाइल नंबर से स्थिति जानें।"}
+                  </p>
+                </div>
+                <Link
+                  href="/track"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white hover:underline underline-offset-4 group"
+                >
+                  Check Status
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               </div>
-              <h2 className="text-sm font-semibold text-[#111827]">
-                Existing Service Referral
-              </h2>
-              <p className="text-xs text-[#6B7280] mt-1">
-                Direct hand-off to pre-existing state programs and certified welfare schemes.
-              </p>
-            </div>
 
-            <div className="p-4 rounded-lg border border-[#E2E5EA] bg-[#F7F8FA]">
-              <div className="flex items-center justify-between mb-2">
-                <PathBadge path="B" />
-                <span className="text-[11px] font-mono text-[#6B7280]">RCD / DWSD</span>
+              {/* Get Help Submitting */}
+              <div className="rounded-xl p-6 sm:p-7 flex flex-col justify-between min-h-[200px] bg-[var(--action-help)] text-white shadow-md hover:shadow-lg transition-shadow">
+                <div>
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-md mb-4">
+                    SUPPORT / सहायता
+                  </span>
+                  <MessageCircle className="h-8 w-8 mb-3 opacity-90" />
+                  <h2 className="text-xl font-bold leading-snug">
+                    Get Help Submitting
+                  </h2>
+                  <p className="text-sm text-white/80 mt-1.5 leading-relaxed">
+                    {lang === "en"
+                      ? "Assisted mode for citizens needing language or tech support."
+                      : "भाषा या तकनीकी सहायता चाहिए? मदद उपलब्ध है।"}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white hover:underline underline-offset-4 group cursor-pointer"
+                >
+                  Get Help
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </button>
               </div>
-              <h2 className="text-sm font-semibold text-[#111827]">
-                Grievance Routing
-              </h2>
-              <p className="text-xs text-[#6B7280] mt-1">
-                Accountable authority routing for infrastructure and standard departmental repairs.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-lg border border-[#E2E5EA] bg-[#F7F8FA]">
-              <div className="flex items-center justify-between mb-2">
-                <PathBadge path="C" />
-                <span className="text-[11px] font-mono text-[#6B7280]">IGC Certified</span>
-              </div>
-              <h2 className="text-sm font-semibold text-[#111827]">
-                Innovation Gap Certificate
-              </h2>
-              <p className="text-xs text-[#6B7280] mt-1">
-                Evidence-verified structural gaps activating university and industry pilot trials.
-              </p>
             </div>
           </div>
         </section>
 
-        {/* Blueprint Section 11 Exact Tab Integration */}
+        {/* ── How JharSetu Works ── */}
         <section
-          className="rounded-xl border border-[#E2E5EA] bg-white p-6"
-          aria-labelledby="pilot-heading"
+          className="w-full py-16 sm:py-20"
+          aria-labelledby="how-it-works-heading"
         >
-          <div className="mb-4">
-            <h2 id="pilot-heading" className="text-lg font-bold text-[#111827]">
-              Government Validation & Pilot Tracking (Screen 11 Blueprint)
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2
+              id="how-it-works-heading"
+              className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] text-center mb-12"
+            >
+              {lang === "en"
+                ? "How JharSetu works for you"
+                : "झारसेतु आपके लिए कैसे काम करता है"}
             </h2>
-            <p className="text-xs text-[#6B7280]">
-              Tabs directly under page heading, full width on mobile, left-aligned on desktop.
-            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
+              {/* Step 01 */}
+              <div className="text-center md:text-left">
+                <span className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-lg font-bold mb-4">
+                  01
+                </span>
+                <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">
+                  {lang === "en" ? "Report" : "रिपोर्ट"}
+                </h3>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed mb-3">
+                  {lang === "en"
+                    ? "Describe your problem by voice, text, or photo. We categorize it automatically."
+                    : "समस्या बोलकर, लिखकर या फोटो से बताएं। हम स्वचालित वर्गीकरण करते हैं।"}
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] px-2.5 py-1 rounded-md">
+                    Existing Service
+                  </span>
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-[var(--state-warning)]/10 text-[var(--state-warning)] px-2.5 py-1 rounded-md">
+                    Authority Action
+                  </span>
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-[var(--accent-innovation)]/10 text-[var(--accent-innovation)] px-2.5 py-1 rounded-md">
+                    Innovation Challenge
+                  </span>
+                </div>
+              </div>
+
+              {/* Step 02 */}
+              <div className="text-center md:text-left">
+                <span className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-lg font-bold mb-4">
+                  02
+                </span>
+                <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">
+                  {lang === "en" ? "Review" : "समीक्षा"}
+                </h3>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed mb-3">
+                  {lang === "en"
+                    ? "Human reviewers verify AI suggestions and route your case to the right path."
+                    : "मानव समीक्षक AI सुझावों को सत्यापित करते हैं और सही मार्ग चुनते हैं।"}
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] px-2.5 py-1 rounded-md">
+                    Existing Service
+                  </span>
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-[var(--state-warning)]/10 text-[var(--state-warning)] px-2.5 py-1 rounded-md">
+                    Authority Action
+                  </span>
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-[var(--accent-innovation)]/10 text-[var(--accent-innovation)] px-2.5 py-1 rounded-md">
+                    Innovation Challenge
+                  </span>
+                </div>
+              </div>
+
+              {/* Step 03 */}
+              <div className="text-center md:text-left">
+                <span className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-lg font-bold mb-4">
+                  03
+                </span>
+                <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">
+                  {lang === "en" ? "Next Step" : "अगला कदम"}
+                </h3>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed mb-3">
+                  {lang === "en"
+                    ? "Your problem gets referred to an existing service, routed as a grievance, or elevated as an innovation challenge."
+                    : "आपकी समस्या मौजूदा सेवा, शिकायत निवारण, या नवाचार चुनौती के रूप में आगे बढ़ती है।"}
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] px-2.5 py-1 rounded-md">
+                    Existing Service
+                  </span>
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-[var(--state-warning)]/10 text-[var(--state-warning)] px-2.5 py-1 rounded-md">
+                    Authority Action
+                  </span>
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-[var(--accent-innovation)]/10 text-[var(--accent-innovation)] px-2.5 py-1 rounded-md">
+                    Innovation Challenge
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
+        </section>
 
-          <PilotTabs defaultValue="overview">
-            <PilotTabContent value="overview" className="pt-6 space-y-4">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Decision / Intake Card */}
-                <Card className="border-[#E2E5EA] shadow-none">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <PathBadge path="C" />
-                      <TrustBadge type="pending" label="PILOT_PENDING" />
-                    </div>
-                    <CardTitle className="text-base font-semibold text-[#111827] mt-2">
-                      Water Arsenic Remediation in Sahebganj
-                    </CardTitle>
-                    <CardDescription className="text-xs text-[#6B7280]">
-                      Case ID: JH-2026-09-0012 • Sahibganj District
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3 text-xs">
-                    <div className="p-2.5 rounded bg-[#F7F8FA] border border-[#E2E5EA] space-y-1">
-                      <div className="font-semibold text-[#111827]">
-                        Verified Baseline
-                      </div>
-                      <div className="text-[#6B7280]">
-                        0.08 mg/L arsenic concentration (WHO limit: 0.01 mg/L).
-                      </div>
-                    </div>
-                    <div>
-                      <div className="font-semibold text-[#111827] mb-1">
-                        Pilot Progress
-                      </div>
-                      <Progress value={progressVal} className="h-2" />
-                      <div className="flex justify-between text-[11px] text-[#6B7280] mt-1">
-                        <span>Milestone 2 of 4 complete</span>
-                        <span>{progressVal}%</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="pt-2 border-t border-[#E2E5EA] flex gap-2">
-                    {/* Outline button only */}
-                    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                      <DialogTrigger
-                        render={
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full border-[#E2E5EA] text-[#111827] hover:bg-[#F7F8FA] text-xs font-medium"
-                          >
-                            Inspect Decision Card
-                          </Button>
-                        }
-                      />
-                      <DialogContent className="sm:max-w-lg border-[#E2E5EA] rounded-2xl">
-                        <DialogHeader>
-                          <DialogTitle className="text-base font-bold text-[#111827]">
-                            Reviewer Decision Confirmation
-                          </DialogTitle>
-                          <DialogDescription className="text-xs text-[#6B7280]">
-                            Verify evidence before issuing the Innovation Gap Certificate.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-3 py-2 text-xs">
-                          <FormField
-                            id="reason-code"
-                            label="Mandatory Reason Code"
-                            required
-                            hint="Document why Path C was chosen over standard Path B repair."
-                          >
-                            <Input
-                              id="reason-code"
-                              defaultValue="NO_KNOWN_STATE_TECH_SOL"
-                              className="border-[#E2E5EA] text-xs"
-                            />
-                          </FormField>
-                          <FormField
-                            id="decision-rationale"
-                            label="Reviewer Rationale"
-                            required
-                          >
-                            <Textarea
-                              id="decision-rationale"
-                              placeholder="Describe lab test corroboration and geographic clusters..."
-                              className="border-[#E2E5EA] text-xs min-h-[80px]"
-                            />
-                          </FormField>
-                        </div>
-                        <DialogFooter>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setDialogOpen(false)}
-                            className="border-[#E2E5EA]"
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => {
-                              setDialogOpen(false);
-                              toast.success("Decision recorded with audit hash");
-                            }}
-                            className="bg-[#0F62B4] text-white"
-                          >
-                            Confirm Decision
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                  </CardFooter>
-                </Card>
+        {/* ── Innovation Callout ── */}
+        <section className="w-full py-14 sm:py-16 bg-[var(--accent-innovation)]/5 border-y border-[var(--border-default)]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+            <Sparkles className="h-8 w-8 text-[var(--accent-innovation)] mx-auto mb-4" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-3">
+              {lang === "en"
+                ? "Some problems need a new solution."
+                : "कुछ समस्याओं के लिए नया समाधान चाहिए।"}
+            </h2>
+            <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-xl mx-auto mb-6 leading-relaxed">
+              {lang === "en"
+                ? "Verified recurring problems can become innovation challenges — connecting universities, industry, and government to solve real Jharkhand issues."
+                : "सत्यापित बार-बार आने वाली समस्याएं नवाचार चुनौती बन सकती हैं — विश्वविद्यालय, उद्योग और सरकार को जोड़कर समाधान खोजें।"}
+            </p>
+            <Link
+              href="/challenges"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-innovation)] hover:underline underline-offset-4 group"
+            >
+              {lang === "en"
+                ? "View Verified Challenges"
+                : "सत्यापित चुनौतियां देखें"}
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+        </section>
 
-                {/* Verification Queue Table */}
-                <Card className="lg:col-span-2 border-[#E2E5EA] shadow-none">
-                  <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                    <div>
-                      <CardTitle className="text-base font-semibold text-[#111827]">
-                        Active Case Queue
-                      </CardTitle>
-                      <CardDescription className="text-xs text-[#6B7280]">
-                        Seeded demonstration cases with role and audit trail
-                      </CardDescription>
-                    </div>
-                    {/* Outline button only */}
-                    <Sheet>
-                      <SheetTrigger
-                        render={
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-[#E2E5EA] text-xs font-medium"
-                          >
-                            <SlidersHorizontal className="h-3.5 w-3.5 mr-1 text-[#0F62B4]" />
-                            Filters
-                          </Button>
-                        }
-                      />
-                      <SheetContent className="border-l-[#E2E5EA] bg-white">
-                        <SheetHeader>
-                          <SheetTitle className="text-base font-bold text-[#111827]">
-                            Queue Filters
-                          </SheetTitle>
-                          <SheetDescription className="text-xs text-[#6B7280]">
-                            Filter reports by district, path, or severity.
-                          </SheetDescription>
-                        </SheetHeader>
-                        <div className="space-y-4 py-6 text-xs">
-                          <FormField id="district-select" label="District" required={false}>
-                            <Select defaultValue="sahibganj">
-                              <SelectTrigger className="border-[#E2E5EA] text-xs">
-                                <SelectValue placeholder="Select district" />
-                              </SelectTrigger>
-                              <SelectContent className="border-[#E2E5EA]">
-                                <SelectItem value="sahibganj">Sahibganj</SelectItem>
-                                <SelectItem value="ranchi">Ranchi</SelectItem>
-                                <SelectItem value="dhanbad">Dhanbad</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormField>
-                        </div>
-                      </SheetContent>
-                    </Sheet>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="border-b-[#E2E5EA] bg-[#F7F8FA]">
-                          <TableHead className="text-xs font-semibold text-[#111827]">Case ID</TableHead>
-                          <TableHead className="text-xs font-semibold text-[#111827]">Location</TableHead>
-                          <TableHead className="text-xs font-semibold text-[#111827]">Path</TableHead>
-                          <TableHead className="text-xs font-semibold text-[#111827]">Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow className="border-b-[#E2E5EA] hover:bg-[#F7F8FA]">
-                          <TableCell className="font-mono text-xs font-medium">JH-2026-09-0012</TableCell>
-                          <TableCell className="text-xs">Sahibganj (Barharwa)</TableCell>
-                          <TableCell><PathBadge path="C" /></TableCell>
-                          <TableCell><TrustBadge type="pending" label="PILOT_PENDING" /></TableCell>
-                        </TableRow>
-                        <TableRow className="border-b-[#E2E5EA] hover:bg-[#F7F8FA]">
-                          <TableCell className="font-mono text-xs font-medium">JH-2026-09-0044</TableCell>
-                          <TableCell className="text-xs">Ranchi (Ring Road)</TableCell>
-                          <TableCell><PathBadge path="B" /></TableCell>
-                          <TableCell><TrustBadge type="confirmed" label="RESOLVED" /></TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-              </div>
-            </PilotTabContent>
-
-            <PilotTabContent value="timeline" className="pt-6">
-              <div className="p-6 rounded-lg border border-[#E2E5EA] bg-white space-y-4">
-                <h3 className="text-sm font-bold text-[#111827]">State Transition Audit Timeline</h3>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3 text-xs">
-                    <div className="h-6 w-6 rounded-full bg-[#16A34A]/10 text-[#16A34A] flex items-center justify-center font-bold">✓</div>
-                    <div>
-                      <div className="font-semibold text-[#111827]">REPORT_SUBMITTED → AI_PROCESSED</div>
-                      <div className="text-[#6B7280]">Whisper transcription and PII redaction verified without errors.</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 text-xs">
-                    <div className="h-6 w-6 rounded-full bg-[#0F62B4]/10 text-[#0F62B4] flex items-center justify-center font-bold">2</div>
-                    <div>
-                      <div className="font-semibold text-[#111827]">REVIEWER_SIGN_OFF</div>
-                      <div className="text-[#6B7280]">Two human reviewers recorded IGC eligibility sign-off with reason code.</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </PilotTabContent>
-
-            <PilotTabContent value="measurements" className="pt-6">
-              <div className="p-4 rounded-lg border border-[#E2E5EA] bg-white">
-                <h3 className="text-sm font-semibold text-[#111827] mb-2">Field Sensor Measurements</h3>
-                <p className="text-xs text-[#6B7280] mb-4">Baseline: 0.08 mg/L arsenic. Current pilot reading: 0.008 mg/L.</p>
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-3/4 bg-[#E2E5EA]" />
-                  <Skeleton className="h-4 w-1/2 bg-[#E2E5EA]" />
-                </div>
-              </div>
-            </PilotTabContent>
-
-            <PilotTabContent value="evidence" className="pt-6">
-              <ScrollArea className="h-32 rounded-md border border-[#E2E5EA] p-4 bg-white">
-                <div className="text-xs space-y-2 text-[#6B7280]">
-                  <p className="font-medium text-[#111827]">Uploaded Lab Reports (Signed Object Storage):</p>
-                  <p>1. sahibganj_water_test_batch_01.pdf (SHA-256: 7f83b165...)</p>
-                  <p>2. field_filter_installation_photo_01.jpg (Exif Geotag: 25.042°N, 87.831°E)</p>
-                </div>
-              </ScrollArea>
-            </PilotTabContent>
-
-            <PilotTabContent value="risks-issues" className="pt-6">
-              <Accordion className="w-full bg-white border border-[#E2E5EA] rounded-md px-4">
-                <AccordionItem value="item-1" className="border-b-[#E2E5EA]">
-                  <AccordionTrigger className="text-xs font-semibold text-[#111827]">
-                    Seasonal Monsoon Silt Clogging
-                  </AccordionTrigger>
-                  <AccordionContent className="text-xs text-[#6B7280]">
-                    Pre-filtration mesh cleanout protocol scheduled bi-weekly by BIT Mesra pilot team.
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </PilotTabContent>
-
-            <PilotTabContent value="commitments" className="pt-6">
-              <div className="p-4 rounded-lg border border-[#E2E5EA] bg-white space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#111827]">Tata Steel Foundation (CSR)</span>
-                  <TrustBadge type="confirmed" label="CONFIRMED: ₹15,00,000" />
-                </div>
-                <p className="text-xs text-[#6B7280]">
-                  Direct commitment ledger entry locked with irrevocable audit token.
+        {/* ── Stats Row ── */}
+        <section
+          className="w-full py-14 sm:py-16"
+          aria-label="Platform Statistics"
+        >
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center">
+              <div className="p-6 rounded-xl border border-[var(--border-default)] bg-white">
+                <p className="text-3xl sm:text-4xl font-bold text-[var(--accent-primary)]">
+                  1,247
+                </p>
+                <p className="text-sm text-[var(--text-muted)] mt-1.5 font-medium">
+                  {lang === "en"
+                    ? "Total Complaints Received"
+                    : "कुल प्राप्त शिकायतें"}
+                </p>
+                <p className="text-[10px] text-[var(--text-muted)] mt-1 italic">
+                  Illustrative demo data
                 </p>
               </div>
-            </PilotTabContent>
-
-            <PilotTabContent value="evaluation" className="pt-6">
-              <div className="p-4 rounded-lg border border-[#E2E5EA] bg-white">
-                <h3 className="text-xs font-semibold text-[#111827] mb-1">State Evaluation Matrix</h3>
-                <p className="text-xs text-[#6B7280]">
-                  Target cost: &lt;₹0.15 / liter. Pilot achieved: ₹0.09 / liter with 99.2% uptime.
+              <div className="p-6 rounded-xl border border-[var(--border-default)] bg-white">
+                <p className="text-3xl sm:text-4xl font-bold text-[var(--state-success)]">
+                  934
+                </p>
+                <p className="text-sm text-[var(--text-muted)] mt-1.5 font-medium">
+                  {lang === "en"
+                    ? "Resolved Gracefully"
+                    : "सफलतापूर्वक निवारित"}
+                </p>
+                <p className="text-[10px] text-[var(--text-muted)] mt-1 italic">
+                  Illustrative demo data
                 </p>
               </div>
-            </PilotTabContent>
-
-            <PilotTabContent value="audit" className="pt-6">
-              <EmptyState
-                title="Immutable Audit Ledger"
-                description="All state transitions, AI suggested confidence scores, and reviewer signatures are cryptographically bound."
-              />
-            </PilotTabContent>
-          </PilotTabs>
+              <div className="p-6 rounded-xl border border-[var(--border-default)] bg-white">
+                <p className="text-3xl sm:text-4xl font-bold text-[var(--state-warning)]">
+                  4.2 days
+                </p>
+                <p className="text-sm text-[var(--text-muted)] mt-1.5 font-medium">
+                  {lang === "en"
+                    ? "Avg. Resolution Time"
+                    : "औसत निवारण समय"}
+                </p>
+                <p className="text-[10px] text-[var(--text-muted)] mt-1 italic">
+                  Illustrative demo data
+                </p>
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 
-      {/* Official Government Footer */}
-      <footer className="border-t border-[#E2E5EA] bg-white py-6 mt-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6B7280]">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-[#111827]">JharSetu</span>
-            <span>• Guidelines for Indian Government Websites (GIGW 3.0) Baseline</span>
+      {/* ───── FOOTER ───── */}
+      <footer className="w-full bg-[var(--brand-navy)] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Platform Identity */}
+            <div className="space-y-3">
+              <h3 className="text-lg font-bold">
+                JharSetu <span className="font-normal text-white/70">| झारसेतु</span>
+              </h3>
+              <p className="text-sm text-white/70 leading-relaxed">
+                {lang === "en"
+                  ? "Innovation Gap Exchange — turning citizen problem reports into accountable civic and innovation outcomes for Jharkhand."
+                  : "इनोवेशन गैप एक्सचेंज — नागरिक समस्या रिपोर्ट को जवाबदेह नागरिक और नवाचार परिणामों में बदलना।"}
+              </p>
+            </div>
+
+            {/* Helplines */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-white/80">
+                {lang === "en" ? "Official Helplines" : "आधिकारिक हेल्पलाइन"}
+              </h4>
+              <div className="space-y-2 text-sm text-white/70">
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-white/50 shrink-0" />
+                  <span>
+                    <strong className="text-white">181</strong> — General Public
+                    Grievance
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-white/50 shrink-0" />
+                  <span>
+                    <strong className="text-white">1912</strong> — Electricity
+                    Complaint Desk
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Links */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-white/80">
+                {lang === "en" ? "Quick Links" : "त्वरित लिंक"}
+              </h4>
+              <div className="flex flex-col gap-1.5 text-sm text-white/70">
+                <a
+                  href="#"
+                  className="hover:text-white transition-colors"
+                >
+                  Website Policy
+                </a>
+                <a
+                  href="#"
+                  className="hover:text-white transition-colors"
+                >
+                  Help &amp; Accessibility
+                </a>
+              </div>
+            </div>
           </div>
-          <p>
-            Designed for SIH 26043 Selection Round • Privacy-Preserving Civic & Innovation Exchange
-          </p>
+
+          {/* Attribution */}
+          <div className="mt-8 pt-6 border-t border-white/20 text-center text-xs text-white/50">
+            <p>
+              Designed for SIH 26043 • Government of Jharkhand •
+              Privacy-Preserving Civic &amp; Innovation Exchange
+            </p>
+          </div>
         </div>
       </footer>
     </div>

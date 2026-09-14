@@ -23,6 +23,11 @@ cards) suited to desktop use.
 | Error           | `--state-error`     | `#DC2626` |
 | Success         | `--state-success`   | `#16A34A` |
 | Warning (needs info)| `--state-warning`| `#D97706` |
+| Report card (orange) | `--action-report` | `#C1440E` |
+| Track card (navy)    | `--action-track`  | `#0F1F3D` |
+| Help card (green)    | `--action-help`   | `#1F5C3F` |
+| Utility bar / footer | `--brand-navy`    | `#0F1F3D` |
+| Homepage background  | `--bg-cream`      | `#F5F1EA` |
 
 Path A/B/C get a consistent small color tag across every screen (A =
 accent-primary, B = warning, C = accent-innovation) so judges can

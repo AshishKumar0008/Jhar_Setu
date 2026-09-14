@@ -66,6 +66,13 @@
   --tricolor-white: #FFFFFF;
   --tricolor-green: #138808;
 
+  /* Homepage Action Card & Public Page Tokens (03-public-pages) */
+  --action-report: #C1440E;
+  --action-track: #0F1F3D;
+  --action-help: #1F5C3F;
+  --brand-navy: #0F1F3D;
+  --bg-cream: #F5F1EA;
+
   /* Strict Light Civic Shadcn Token Mapping */
   --background: var(--bg-base);
   --foreground: var(--text-primary);
