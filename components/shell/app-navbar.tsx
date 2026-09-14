@@ -101,37 +101,37 @@ export function AppNavbar({
 
   return (
     <header className={`sticky top-0 z-40 w-full bg-white border-b border-[#E2E5EA] ${className}`}>
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 gap-4">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-2.5 sm:px-6 lg:px-8 gap-1.5 sm:gap-4">
         {/* Left Section: Sidebar Toggle (internal roles only) + Logo / Emblem + Bilingual Title */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 min-w-0">
           {showSidebarToggle && (
             <button
               type="button"
               onClick={onToggleSidebar}
-              className="flex h-9 w-9 items-center justify-center rounded-md border border-[#E2E5EA] text-[#111827] hover:bg-[#F7F8FA] hover:text-[#0F62B4] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F62B4]"
+              className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-md border border-[#E2E5EA] text-[#111827] hover:bg-[#F7F8FA] hover:text-[#0F62B4] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F62B4]"
               aria-label={sidebarOpen ? "Close role sidebar" : "Open role sidebar"}
               title={sidebarOpen ? "Close role navigation" : "Open role navigation"}
             >
               {sidebarOpen ? (
-                <PanelLeftClose className="h-5 w-5 text-[#0F62B4]" />
+                <PanelLeftClose className="h-4 w-4 sm:h-5 sm:w-5 text-[#0F62B4]" />
               ) : (
-                <PanelLeftOpen className="h-5 w-5 text-[#6B7280]" />
+                <PanelLeftOpen className="h-4 w-4 sm:h-5 sm:w-5 text-[#6B7280]" />
               )}
             </button>
           )}
 
           <Link
             href="/"
-            className="flex items-center gap-3 text-[#111827] hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F62B4] rounded-md p-0.5"
+            className="flex items-center gap-1.5 sm:gap-3 text-[#111827] hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F62B4] rounded-md p-0.5 min-w-0"
             aria-label="JharSetu Jharkhand Home"
           >
             {/* Circular Emblem / Logo slot */}
             <div
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F7F8FA] border border-[#E2E5EA] text-[#0F62B4] font-semibold text-xs text-center leading-tight shadow-none"
+              className="flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full bg-[#F7F8FA] border border-[#E2E5EA] text-[#0F62B4] font-semibold text-xs text-center leading-tight shadow-none"
               aria-hidden="true"
             >
               <svg
-                className="h-6 w-6 text-[#0F62B4]"
+                className="h-5 w-5 sm:h-6 sm:w-6 text-[#0F62B4]"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -150,16 +150,16 @@ export function AppNavbar({
               </svg>
             </div>
 
-            <div className="flex flex-col">
-              <div className="flex items-baseline gap-2">
-                <span className="font-bold text-lg leading-tight tracking-tight text-[#111827]">
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-baseline gap-1 sm:gap-2">
+                <span className="font-bold text-base sm:text-lg leading-tight tracking-tight text-[#111827]">
                   JharSetu
                 </span>
-                <span className="font-normal text-sm text-[#6B7280]">
+                <span className="font-normal text-xs sm:text-sm text-[#6B7280]">
                   झारसेतु
                 </span>
               </div>
-              <span className="text-[11px] text-[#6B7280] font-medium tracking-wide">
+              <span className="hidden sm:block text-[11px] text-[#6B7280] font-medium tracking-wide truncate">
                 Government of Jharkhand • झारखंड सरकार
               </span>
             </div>
@@ -167,16 +167,16 @@ export function AppNavbar({
         </div>
 
         {/* Center Section: Reserved for page title or breadcrumb in later chapters */}
-        <div className="flex-1 flex justify-center items-center px-2 min-w-0">
+        <div className="flex-1 shrink min-w-0 flex justify-center items-center px-1 sm:px-2">
           {pageTitle ? (
-            <div className="text-sm font-semibold text-[#111827] truncate max-w-md">
+            <div className="text-xs sm:text-sm font-semibold text-[#111827] truncate max-w-[120px] sm:max-w-md">
               {pageTitle}
             </div>
           ) : null}
         </div>
 
         {/* Right Section: Language toggle + Sign in / Role menu */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Language Toggle (English / हिंदी segmented control) */}
           <div
             className="flex items-center rounded-md border border-[#E2E5EA] bg-[#F7F8FA] p-0.5 text-xs"
@@ -186,7 +186,7 @@ export function AppNavbar({
             <button
               type="button"
               onClick={() => handleLangToggle("en")}
-              className={`min-h-[32px] px-2.5 py-1 rounded text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F62B4] ${
+              className={`min-h-[28px] sm:min-h-[32px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded text-[11px] sm:text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F62B4] ${
                 lang === "en"
                   ? "bg-white text-[#0F62B4] shadow-xs font-semibold"
                   : "text-[#6B7280] hover:text-[#111827]"
@@ -198,7 +198,7 @@ export function AppNavbar({
             <button
               type="button"
               onClick={() => handleLangToggle("hi")}
-              className={`min-h-[32px] px-2.5 py-1 rounded text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F62B4] ${
+              className={`min-h-[28px] sm:min-h-[32px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded text-[11px] sm:text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F62B4] ${
                 lang === "hi"
                   ? "bg-white text-[#0F62B4] shadow-xs font-semibold"
                   : "text-[#6B7280] hover:text-[#111827]"
@@ -216,15 +216,15 @@ export function AppNavbar({
                 variant="outline"
                 size="sm"
                 onClick={() => setRoleMenuOpen(!roleMenuOpen)}
-                className="min-h-[36px] border-[#E2E5EA] text-[#111827] hover:bg-[#F7F8FA] font-medium text-xs px-3 gap-2"
+                className="min-h-[30px] sm:min-h-[36px] border-[#E2E5EA] text-[#111827] hover:bg-[#F7F8FA] font-medium text-xs px-2 sm:px-3 gap-1 sm:gap-2"
                 aria-expanded={roleMenuOpen}
                 aria-haspopup="menu"
               >
-                <UserCheck className="h-3.5 w-3.5 text-[#0F62B4]" />
-                <span className="font-semibold text-xs">
+                <UserCheck className="h-3.5 w-3.5 text-[#0F62B4] shrink-0" />
+                <span className="font-semibold text-[11px] sm:text-xs truncate max-w-[65px] sm:max-w-[120px]">
                   {ROLE_DISPLAY_NAMES[user.role]?.en || user.role}
                 </span>
-                <ChevronDown className="h-3.5 w-3.5 text-[#6B7280]" />
+                <ChevronDown className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#6B7280] shrink-0" />
               </Button>
 
               {roleMenuOpen && (
@@ -307,10 +307,11 @@ export function AppNavbar({
               variant="outline"
               size="sm"
               onClick={onSignInClick}
-              className="min-h-[36px] border-[#E2E5EA] text-[#111827] hover:bg-[#F7F8FA] hover:text-[#0F62B4] font-medium text-xs px-3"
+              className="min-h-[30px] sm:min-h-[36px] border-[#E2E5EA] text-[#111827] hover:bg-[#F7F8FA] hover:text-[#0F62B4] font-medium text-xs px-2 sm:px-3"
             >
-              <LogIn className="h-3.5 w-3.5 mr-1 text-[#0F62B4]" />
-              Sign in / प्रवेश
+              <LogIn className="h-3.5 w-3.5 sm:mr-1 text-[#0F62B4] shrink-0" />
+              <span className="hidden sm:inline">Sign in / प्रवेश</span>
+              <span className="sm:hidden">Sign in</span>
             </Button>
           )}
         </div>

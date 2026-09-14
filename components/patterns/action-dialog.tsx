@@ -91,16 +91,15 @@ export function ActionDialog({
 
               <Button
                 type="button"
-                variant={confirmVariant === "destructive" ? "destructive" : "default"}
+                variant={confirmVariant}
                 onClick={onConfirm}
                 disabled={isConfirmLoading}
-                className={`min-h-[36px] font-semibold text-xs px-4 ${
-                  confirmVariant === "default"
+                className={`min-h-[36px] font-semibold text-xs px-4 ${confirmVariant === "default"
                     ? "bg-[#0F62B4] hover:bg-[#0D5299] text-white"
                     : confirmVariant === "destructive"
-                    ? "bg-[#DC2626] hover:bg-[#B91C1C] text-white"
-                    : "border-[#E2E5EA] text-[#111827]"
-                }`}
+                      ? "bg-[#DC2626] hover:bg-[#B91C1C] text-white"
+                      : "border-[#E2E5EA] text-[#111827]"
+                  }`}
               >
                 {isConfirmLoading ? "Processing..." : confirmLabel}
               </Button>

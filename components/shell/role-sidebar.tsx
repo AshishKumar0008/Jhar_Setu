@@ -175,7 +175,12 @@ export function RoleSidebar({
   const navItems = ROLE_NAV_CONFIGS[roleKey] || [];
   const roleTitle = ROLE_TITLES[roleKey] || { en: currentRole, hi: "" };
 
-  const currentActive = activeItemId || (navItems.length > 0 ? navItems[0].id : "");
+  const isValidActive = Boolean(activeItemId && navItems.some((item) => item.id === activeItemId));
+  const currentActive = isValidActive
+    ? (activeItemId as string)
+    : navItems.length > 0
+    ? navItems[0].id
+    : "";
 
   return (
     <>
@@ -192,8 +197,9 @@ export function RoleSidebar({
       <aside
         aria-label={`${roleTitle.en} navigation`}
         aria-hidden={!isOpen}
+        inert={!isOpen}
         className={`fixed top-0 left-0 bottom-0 z-50 w-72 sm:w-80 bg-white border-r border-[#E2E5EA] shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          isOpen ? "translate-x-0 pointer-events-auto" : "-translate-x-full pointer-events-none"
         } ${className}`}
       >
         {/* Sidebar Header: Current Role Name + Close Button */}

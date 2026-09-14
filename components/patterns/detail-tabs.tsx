@@ -71,12 +71,12 @@ export function DetailTabs({
                 key={tab.value}
                 value={tab.value}
                 disabled={tab.disabled}
-                className="h-11 px-3.5 py-2 text-sm font-medium border-b-2 border-transparent data-[state=active]:border-[#0F62B4] data-[state=active]:text-[#0F62B4] data-[state=active]:font-semibold hover:text-[#111827] rounded-none transition-colors whitespace-nowrap flex items-center gap-2"
+                className="group/tab h-11 px-3.5 py-2 text-sm font-medium border-b-2 border-transparent data-active:border-[#0F62B4] data-active:text-[#0F62B4] data-active:font-semibold hover:text-[#111827] rounded-none transition-colors whitespace-nowrap flex items-center gap-2"
               >
                 {Icon && <Icon className="h-4 w-4 shrink-0" />}
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
-                  <span className="ml-1 rounded-full bg-[#E2E5EA] px-1.5 py-0.5 text-[10px] font-bold text-[#111827] data-[state=active]:bg-[#0F62B4]/10 data-[state=active]:text-[#0F62B4]">
+                  <span className="ml-1 rounded-full bg-[#E2E5EA] px-1.5 py-0.5 text-[10px] font-bold text-[#111827] group-data-active/tab:bg-[#0F62B4]/10 group-data-active/tab:text-[#0F62B4]">
                     {tab.count}
                   </span>
                 )}

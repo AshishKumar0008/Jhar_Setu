@@ -4,7 +4,7 @@ Update this file after every meaningful implementation change.
 
 ## Current Phase
 
-- Phase 02: Base Chrome & App Shell Components
+- Phase 04: Track Report & Public Challenges
 
 ## Current Goal
 
@@ -21,10 +21,22 @@ Update this file after every meaningful implementation change.
   - `components/patterns/path-badge.tsx` & `components/patterns/status-badge.tsx`: centralized color token mapping for Path A/B/C, trust cues, AI suggestion badge (visually distinct warning tint), and unified workflow status badges.
   - `components/patterns/detail-tabs.tsx`: generic full-width/left-aligned tab bar wrapping shadcn Tabs with blueprint Section 11 pilot tabs default.
   - `components/patterns/action-dialog.tsx`: reusable civic dialog shape with title, description, and footer actions.
+- 03 Public Pages (`context/feature-specs/03-public-pages.md`) — Citizen-facing public routes:
+  - Phase 02 shell testbench relocated from `/` to `/dev/shell-testbench` (dev-only, excluded from production nav).
+  - `components/shell/utility-bar.tsx`: GIGW-pattern dark navy bar above navbar with government identity, Skip to Main Content, and language toggle.
+  - New color tokens: `--action-report`, `--action-track`, `--action-help`, `--brand-navy`, `--bg-cream` defined in `globals.css` and documented in `ui-context.md`.
+  - `app/page.tsx` (Home Page): hero on `--bg-cream`, 3 action cards (Report/Track/Help), how-it-works section, innovation callout, stats row, navy footer with helplines (181, 1912).
+  - `app/report/new/page.tsx` (Report Wizard): two-column desktop layout with left rail nav + reassurance + helplines, linear 2-step stepper with `Progress` bar, voice/text toggle, textarea, location buttons, category chips, photo upload, mobile input, review block, submit/draft actions, and Grievance Resolution Rules side panel.
+- 04 Track Report & Public Challenges (`context/feature-specs/04-track-and-challenges.md`) — Completes the citizen-facing public route set:
+  - `components/patterns/citizen-left-rail.tsx`: shared left-rail component extracted from Report Wizard — 3 nav action buttons (Report/Track/Help) with active-page highlighting, reassurance note, platform identity, helplines, and footer attribution. Used by both Report Wizard and Track Report.
+  - `app/track/page.tsx` (Track Report): two-column layout with shared `CitizenLeftRail`, case ID + recovery phrase lookup, demo status timeline using shared `StatusBadge` tokens (SUBMITTED → AI_PROCESSED → NEEDS_HUMAN_REVIEW → PATH_B_ROUTED), redacted summary card with `PathBadge`, and "Add Information" button using `ActionDialog`.
+  - `app/challenges/page.tsx` (Public Challenges): single-column layout, district/category filter selects, grid of Challenge Passport cards with `PathBadge` (C), `TrustBadge`, `StatusBadge` (shared tokens), redacted problem statement, coarsened location (district/block only — no PII, no exact coordinates, no internal notes), and "View Full Passport →" links. Includes empty state.
+  - `app/challenges/[id]/page.tsx` (Challenge Detail stub): "coming soon" placeholder with PathBadge and back-link to `/challenges`, noting future use of `detail-tabs.tsx` pattern.
+  - Report Wizard refactored to import `CitizenLeftRail` instead of inline left-rail markup (~90 lines of duplication removed).
 
 ## In Progress
 
-- None (Phase 02 completed).
+- None (Phase 04 completed).
 
 ## Next Up
 
